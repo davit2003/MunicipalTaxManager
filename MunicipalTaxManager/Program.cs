@@ -4,14 +4,22 @@ using MunicipalTaxManager.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-
 builder.Services.AddDbContext<TaxDbContext>(options =>
     options.UseInMemoryDatabase("InMemoryTaxDb"));
 
 builder.Services.AddScoped<ITaxRecordRepository, TaxRecordRepository>();
 
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
