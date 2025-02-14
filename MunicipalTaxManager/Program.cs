@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MunicipalTaxManager.DataLayer;
+using MunicipalTaxManager.Middleware;
 using MunicipalTaxManager.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
