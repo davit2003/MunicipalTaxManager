@@ -35,6 +35,13 @@ namespace MunicipalTaxManager.Controllers
             return Ok(chosen.Rate);
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult<List<TaxRecord>>> GetAllTaxes()
+        {
+            var allTaxes = await _repository.GetAllAsync();
+            return Ok(allTaxes);
+        }
+
         [HttpPost]
         public async Task<ActionResult<TaxRecord>> PostTax(TaxRecord record)
         {
@@ -46,6 +53,33 @@ namespace MunicipalTaxManager.Controllers
             await _repository.AddAsync(record);
 
             return CreatedAtAction(nameof(GetTax), new { municipality = record.Municipality, date = record.StartDate }, record);
+        }
+
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> PutTax(int id, [FromBody] TaxRecord updatedRecord)
+        {
+            if (id != updatedRecord.Id)
+            {
+                return BadRequest("Route ID does not match the TaxRecord ID.");
+            }
+
+            await _repository.UpdateAsync(updatedRecord);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteTax(int id)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+            {
+                return NotFound($"Tax record with ID={id} not found.");
+            }
+
+            await _repository.DeleteAsync(id);
+            return NoContent();
         }
     }
 }
